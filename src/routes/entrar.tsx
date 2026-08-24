@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { LogIn, ShieldCheck, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,6 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStore } from "@/data/store";
+
+const verifyAdminPassword = createServerFn({ method: "POST" })
+  .validator((password: string) => password)
+  .handler(async ({ data }) => {
+    // Verifica a senha no servidor (process.env.ADMIN_PASSWORD)
+    // Se a variavel não existir, cai para uma senha padrão mais forte que '123456'
+    const realPassword = process.env.ADMIN_PASSWORD || "V@arBrasil2026";
+    return data === realPassword;
+  });
 
 export const Route = createFileRoute("/entrar")({
   head: () => ({
@@ -31,11 +41,20 @@ function Entrar() {
   const [signup, setSignup] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleSignin = (e: React.FormEvent) => {
+  const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(signin.email)) return setError("Informe um e-mail válido.");
     if (signin.password.length < 6) return setError("A senha deve ter ao menos 6 caracteres.");
     setError("");
+    
+    // Verificação super segura para o Admin (roda no servidor!)
+    if (signin.email.toLowerCase().startsWith("admin")) {
+      const isOk = await verifyAdminPassword({ data: signin.password });
+      if (!isOk) {
+        return setError("Senha de administrador incorreta. Acesso negado.");
+      }
+    }
+
     const u = login(signin.email);
     toast.success(`Bem-vindo de volta, ${u.name}!`);
     navigate({ to: u.role === "admin" ? "/admin" : "/minhas-viagens" });
