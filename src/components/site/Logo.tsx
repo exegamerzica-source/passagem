@@ -1,23 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, getRouteApi } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { getStoreSettings } from "@/api/settings";
+
+const rootRoute = getRouteApi("__root__");
 
 export function Logo({ className }: { tone?: "brand" | "light"; className?: string }) {
-  const [logoBase64, setLogoBase64] = useState<string | null>(null);
-
-  useEffect(() => {
-    getStoreSettings()
-      .then((s: any) => {
-        const logo = s?.logoBase64 || s?.logo_base64 || s?.LOGOBASE64;
-        if (logo && logo.length > 100) {
-          setLogoBase64(logo);
-        }
-      })
-      .catch((err) => {
-        console.warn("[Logo] Erro ao buscar settings:", err);
-      });
-  }, []);
+  const { settings } = rootRoute.useLoaderData();
+  const logo = settings?.logoBase64 || settings?.logo_base64 || settings?.LOGOBASE64;
+  const logoBase64 = logo && logo.length > 100 ? logo : null;
 
   return (
     <Link

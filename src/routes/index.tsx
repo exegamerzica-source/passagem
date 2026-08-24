@@ -1,6 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, getRouteApi } from "@tanstack/react-router";
 import { ArrowRight, Percent, Plane, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SearchWidget } from "@/components/travel/SearchWidget";
 import { PackageCard } from "@/components/travel/PackageCard";
@@ -12,7 +11,6 @@ import { useCatalog, useStore } from "@/data/store";
 import { img } from "@/data/images";
 import heroImage from "@/assets/hero.jpg";
 import { brl } from "@/lib/format";
-import { getStoreSettings } from "@/api/settings";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,22 +31,16 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const rootRoute = getRouteApi("__root__");
+
 function Home() {
   const { ready } = useStore();
   const { packages, destinations, hotels, banners, destinationBySlug, hotelBySlug } = useCatalog();
   const offers = packages.filter((p) => p.featured).slice(0, 6);
-  const [heroBg, setHeroBg] = useState(heroImage);
-
-  useEffect(() => {
-    getStoreSettings()
-      .then((s: any) => {
-        const banner = s?.bannerBase64 || s?.banner_base64 || s?.BANNERBASE64;
-        if (banner && banner.length > 100) {
-          setHeroBg(banner);
-        }
-      })
-      .catch(() => {});
-  }, []);
+  
+  const { settings } = rootRoute.useLoaderData();
+  const banner = settings?.bannerBase64 || settings?.banner_base64 || settings?.BANNERBASE64;
+  const heroBg = banner && banner.length > 100 ? banner : heroImage;
 
   return (
     <SiteLayout>

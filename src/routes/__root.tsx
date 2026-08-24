@@ -75,7 +75,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+import { getStoreSettings } from "@/api/settings";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async () => {
+    const settings = await getStoreSettings().catch(() => null);
+    return { settings };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -108,6 +114,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
