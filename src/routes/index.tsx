@@ -52,41 +52,77 @@ function Home() {
 
   return (
     <SiteLayout>
-      {/* HERO */}
-      <section className="relative isolate">
-        <img
-          src={heroBg}
-          alt="Imagem de destaque da loja"
-          width={1920}
-          height={1080}
-          className="absolute inset-0 -z-10 size-full object-cover transition-opacity duration-500"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-hero" aria-hidden="true" />
-        <div className="container-page pb-8 pt-12 md:pb-14 md:pt-20">
-          <div className="max-w-2xl text-primary-foreground">
-            <p className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur">
-              <Sparkles className="size-3.5 text-highlight" aria-hidden="true" />
-              Mais de 320 mil viajantes atendidos
-            </p>
-            <h1 className="mt-4 text-3xl font-extrabold leading-tight md:text-5xl">
-              Sua próxima viagem começa com o melhor preço do Brasil
-            </h1>
-            <p className="mt-3 max-w-xl text-sm text-primary-foreground/85 md:text-base">
-              Pacotes com voo, hotel e traslado, hotéis auditados e voos nacionais. Reserve em minutos e pague em até
-              12x sem juros.
-            </p>
+      {/* HERO / PROMO BANNER */}
+      <section className="relative bg-brand">
+        {heroBg !== heroImage ? (
+          // Layout quando há um banner promocional (como o flyer do Rio)
+          <div className="container-page pb-8 pt-4 md:pt-8 flex flex-col md:flex-row gap-8 items-center">
+            {/* Texto / Buscador na esquerda */}
+            <div className="flex-1 text-primary-foreground space-y-6 w-full">
+              <div>
+                <span className="inline-block bg-highlight text-highlight-foreground px-3 py-1 text-sm font-bold uppercase rounded-full mb-4">
+                  🔥 Oferta Exclusiva
+                </span>
+                <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
+                  Viaje mais. Pague menos. Viva o melhor!
+                </h1>
+                <p className="text-primary-foreground/90 text-lg">
+                  Aproveite nossa promoção relâmpago. Garanta já a sua viagem com tudo incluso e pague em até 12x sem juros.
+                </p>
+              </div>
+              <div className="w-full">
+                <SearchWidget />
+              </div>
+            </div>
+            
+            {/* Poster / Banner na direita (clicável para o checkout) */}
+            <div className="w-full md:w-[400px] flex-shrink-0 group relative shadow-2xl rounded-2xl overflow-hidden border-4 border-highlight transition-transform hover:-translate-y-2">
+              <Link to="/checkout/rio-de-janeiro-promo-casal" className="block focus:outline-none">
+                <img 
+                  src={heroBg} 
+                  alt="Promoção exclusiva" 
+                  className="w-full h-auto object-cover"
+                />
+                {/* Sobreposição de hover para incentivar o clique */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                   <div className="opacity-0 group-hover:opacity-100 bg-highlight text-highlight-foreground font-bold px-6 py-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
+                      Ir para o Checkout →
+                   </div>
+                </div>
+              </Link>
+            </div>
           </div>
-
-          <div className="mt-6 md:mt-8">
-            <SearchWidget />
+        ) : (
+          // Layout padrão se não houver banner promocional (hero default)
+          <div className="relative isolate">
+            <img
+              src={heroBg}
+              alt="Imagem de destaque da loja"
+              width={1920}
+              height={1080}
+              className="absolute inset-0 -z-10 size-full object-cover transition-opacity duration-500"
+            />
+            <div className="absolute inset-0 -z-10 bg-gradient-hero" aria-hidden="true" />
+            <div className="container-page pb-8 pt-12 md:pb-14 md:pt-20">
+              <div className="max-w-2xl text-primary-foreground">
+                <p className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur">
+                  <Sparkles className="size-3.5 text-highlight" aria-hidden="true" />
+                  Mais de 320 mil viajantes atendidos
+                </p>
+                <h1 className="mt-4 text-3xl font-extrabold leading-tight md:text-5xl">
+                  Sua próxima viagem começa com o melhor preço do Brasil
+                </h1>
+                <p className="mt-3 max-w-xl text-sm text-primary-foreground/85 md:text-base">
+                  Pacotes com voo, hotel e traslado, hotéis auditados e voos nacionais. Reserve em minutos e pague em até
+                  12x sem juros.
+                </p>
+              </div>
+              <div className="mt-6 md:mt-8">
+                <SearchWidget />
+              </div>
+            </div>
           </div>
-
-          <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-primary-foreground/85 md:text-sm">
-            <li>Cancelamento flexível em pacotes selecionados</li>
-            <li>Parcelamento em até 12x sem juros</li>
-            <li>Atendimento humano 24h durante a viagem</li>
-          </ul>
-        </div>
+        )}
       </section>
 
       {/* FAIXA DE MARCA */}

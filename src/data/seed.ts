@@ -335,6 +335,28 @@ const flight = (airline: string, outbound: string, inbound: string, stops = 0, b
 
 export const seedPackages: TravelPackage[] = [
   {
+    id: "promo-rio",
+    slug: "rio-de-janeiro-promo-casal",
+    title: "Rio de Janeiro — 7 Dias (Promoção Casal)",
+    destinationSlug: "rio-de-janeiro",
+    origin: "São Paulo (GRU)",
+    hotelSlug: "grand-marina-hotel-rio-de-janeiro",
+    nights: 7,
+    board: "Café da manhã",
+    transfer: true,
+    flight: flight("GOL Linhas Aéreas", "09:00 → 10:15", "16:00 → 17:15", 0, "Bagagem de mão"),
+    price: 1500,
+    oldPrice: 3500,
+    installments: 10,
+    badges: ["OFERTA MALUCA"],
+    seats: 10,
+    departure: "2026-10-10",
+    ret: "2026-10-17",
+    category: "Praia",
+    featured: true,
+    active: true,
+  },
+  {
     id: "p1",
     slug: "porto-seguro-5-noites-all-inclusive",
     title: "Porto Seguro — 5 noites com all inclusive",
