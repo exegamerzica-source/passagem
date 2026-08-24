@@ -18,6 +18,10 @@ import { cn } from "@/lib/utils";
 import type { PaymentProof, Traveler } from "@/data/types";
 import { PIX_ACCOUNT, PROOF_MAX_BYTES } from "@/data/pix";
 import { createOrder } from "@/api/orders";
+import { validateCPF, validateLuhn } from "@/lib/validations";
+import { Route as rootRoute } from "./__root";
+import { getText } from "@/data/texts";
+
 
 
 
@@ -50,19 +54,44 @@ function Checkout() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const { packageBySlug, hotelBySlug, destinationBySlug, coupons } = useCatalog();
+  const { settings } = rootRoute.useLoaderData();
+  const texts = settings?.siteTexts || {};
   const { addBooking, user, login } = useStore();
   const pkg = packageBySlug(slug);
 
   const [step, setStep] = useState(0);
   const [travelerCount, setTravelerCount] = useState("2");
   const [travelers, setTravelers] = useState<Traveler[]>([emptyTraveler(), emptyTraveler()]);
-  const [contact, setContact] = useState({ email: user?.email ?? "", phone: "", name: user?.name ?? "", cpf: "" });
+  const [contact, setContact] = useState({ email: user?.email ?? "", phone: "", name: user?.name ?? "", cpf: "", cep: "", street: "", neighborhood: "", city: "", state: "" });
   const [extras, setExtras] = useState<string[]>(["Seguro viagem"]);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
   const [method, setMethod] = useState("credito");
   const [card, setCard] = useState({ number: "", name: "", expiry: "", cvv: "", installments: "10" });
   const [proof, setProof] = useState<PaymentProof | null>(null);
+
+  const handleCep = async (cepVal: string) => {
+    const rawCep = cepVal.replace(/\D/g, '');
+    setContact(prev => ({ ...prev, cep: cepVal }));
+    if (rawCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setContact(prev => ({
+            ...prev,
+            street: data.logradouro || '',
+            neighborhood: data.bairro || '',
+            city: data.localidade || '',
+            state: data.uf || ''
+          }));
+        }
+      } catch (e) {
+        console.error("CEP fetch failed", e);
+      }
+    }
+  };
+
 
   const [errors, setErrors] = useState<string[]>([]);
   const [processing, setProcessing] = useState(false);
@@ -124,7 +153,7 @@ function Checkout() {
     if (step === 0) {
       travelers.forEach((t, i) => {
         if (t.name.trim().split(" ").length < 2) errs.push(`Informe o nome completo do viajante ${i + 1}.`);
-        if (t.document.replace(/\D/g, "").length < 11) errs.push(`Informe um CPF válido para o viajante ${i + 1}.`);
+        if (!validateCPF(t.document)) errs.push(`Informe um CPF válido para o viajante ${i + 1}.`);
         if (!t.birth) errs.push(`Informe a data de nascimento do viajante ${i + 1}.`);
       });
     }
@@ -132,9 +161,11 @@ function Checkout() {
       if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(contact.email)) errs.push("Informe um e-mail válido.");
       if (contact.phone.replace(/\D/g, "").length < 10) errs.push("Informe um telefone com DDD.");
       if (contact.name.trim().length < 3) errs.push("Informe o nome do responsável pela reserva.");
+      if (!validateCPF(contact.cpf)) errs.push("Informe um CPF válido para o responsável.");
+      if (!contact.cep || !contact.street || !contact.city || !contact.state) errs.push("Preencha o endereço completo.");
     }
     if (step === 4 && (method === "credito" || method === "debito")) {
-      if (card.number.replace(/\D/g, "").length < 16) errs.push("Número do cartão incompleto.");
+      if (!validateLuhn(card.number)) errs.push("Número do cartão inválido.");
       if (card.name.trim().length < 3) errs.push("Informe o nome impresso no cartão.");
       if (!/^\d{2}\/\d{2}$/.test(card.expiry)) errs.push("Validade deve estar no formato MM/AA.");
       if (card.cvv.replace(/\D/g, "").length < 3) errs.push("CVV inválido.");
@@ -455,8 +486,8 @@ function Checkout() {
 
             {step === 2 && (
               <section className="surface-card p-5">
-                <h2 className="text-lg font-bold">Serviços adicionais</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Opcionais para deixar a viagem mais tranquila.</p>
+                <h2 className="text-lg font-bold">{getText(texts, "checkoutExtras")}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{getText(texts, "checkoutExtrasDesc")}</p>
                 <div className="mt-4 space-y-3">
                   {EXTRAS.map((e) => (
                     <label
@@ -483,7 +514,7 @@ function Checkout() {
 
             {step === 3 && (
               <section className="surface-card p-5">
-                <h2 className="text-lg font-bold">Resumo da reserva</h2>
+                <h2 className="text-lg font-bold">{getText(texts, "checkoutTitle")}</h2>
                 <div className="mt-4 flex gap-4 rounded-xl border border-border p-4">
                   <img
                     src={img(hotel?.image ?? "hero")}
@@ -505,7 +536,7 @@ function Checkout() {
                   </div>
                 </div>
 
-                <h3 className="mt-5 text-sm font-bold">Passageiros</h3>
+                <h3 className="mt-5 text-sm font-bold">{getText(texts, "checkoutPassengers")}</h3>
                 <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                   {travelers.map((t, i) => (
                     <li key={i}>
@@ -514,7 +545,7 @@ function Checkout() {
                   ))}
                 </ul>
 
-                <h3 className="mt-5 text-sm font-bold">Serviços adicionais</h3>
+                <h3 className="mt-5 text-sm font-bold">{getText(texts, "checkoutExtras")}</h3>
                 <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                   {extras.length ? extras.map((e) => <li key={e}>{e}</li>) : <li>Nenhum serviço adicional</li>}
                 </ul>
@@ -541,10 +572,10 @@ function Checkout() {
 
             {step === 4 && (
               <section className="surface-card p-5">
-                <h2 className="text-lg font-bold">Pagamento</h2>
+                <h2 className="text-lg font-bold">{getText(texts, "checkoutPaymentTitle")}</h2>
                 <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Lock className="size-3.5 text-success" aria-hidden="true" />
-                  Ambiente de teste: nenhuma cobrança real é feita e os dados do cartão são simulados.
+                  {getText(texts, "checkoutPaymentTestEnv")}
                 </p>
 
                 <RadioGroup value={method} onValueChange={setMethod} className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -716,7 +747,7 @@ function Checkout() {
 
                 {method === "boleto" && (
                   <div className="mt-5 rounded-xl border border-border p-4 text-sm text-muted-foreground">
-                    O boleto simulado vence em 1 dia útil. A reserva ficará com status pendente até a confirmação.
+                    {getText(texts, "checkoutBoletoText")}
                   </div>
                 )}
               </section>
@@ -760,7 +791,7 @@ function Checkout() {
                   <dd>{brl(totals.subtotal)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Serviços adicionais</dt>
+                  <dt className="text-muted-foreground">{getText(texts, "checkoutExtras")}</dt>
                   <dd>{brl(totals.extrasTotal)}</dd>
                 </div>
                 <div className="flex justify-between">
