@@ -45,7 +45,7 @@ function Home() {
   return (
     <SiteLayout>
       {/* HERO / PROMO BANNER */}
-      <section className="relative bg-brand">
+      <section className="relative bg-primary">
         {heroBg !== heroImage ? (
           // Layout quando há um banner promocional (como o flyer do Rio)
           <div className="container-page pb-8 pt-4 md:pt-8 flex flex-col md:flex-row gap-8 items-center">
