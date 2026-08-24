@@ -158,12 +158,13 @@ function Checkout() {
     try {
       const methodLabel =
         method === "credito"
-          ? `Cartão de crédito • ${card.installments}x • **** ${card.number.replace(/\D/g, "").slice(-4)}`
+          ? `Cart\u00e3o de cr\u00e9dito - ${card.installments}x - **** ${card.number.replace(/\D/g, "").slice(-4)}`
           : method === "debito"
-            ? `Cartão de débito • **** ${card.number.replace(/\D/g, "").slice(-4)}`
+            ? `Cart\u00e3o de d\u00e9bito - **** ${card.number.replace(/\D/g, "").slice(-4)}`
             : method === "pix"
-              ? `Pix • ${PIX_ACCOUNT.key} • ${PIX_ACCOUNT.holder}`
-              : "Boleto bancário";
+              ? `Pix - ${PIX_ACCOUNT.key} - ${PIX_ACCOUNT.holder}`
+              : "Boleto banc\u00e1rio";
+
 
       const code = `VB-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
       const status = method === "boleto" || method === "pix" ? "Pendente" : "Confirmado";
