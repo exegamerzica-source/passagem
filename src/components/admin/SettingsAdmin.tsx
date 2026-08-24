@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getStoreSettings, updateStoreSettings } from "@/server/settings";
+import { getStoreSettings, updateStoreSettings } from "@/api/settings";
 
 export function SettingsAdmin() {
   const [cnpj, setCnpj] = useState("");
