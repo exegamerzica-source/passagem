@@ -28,6 +28,7 @@ import { useStore } from "@/data/store";
 import { brl, dateBR, slugify } from "@/lib/format";
 import type { Booking, Coupon, TravelPackage } from "@/data/types";
 import { SettingsAdmin } from "@/components/admin/SettingsAdmin";
+import { OrdersAdmin } from "@/components/admin/OrdersAdmin";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -134,7 +135,7 @@ function Admin() {
           </TabsContent>
 
           <TabsContent value="reservas" className="mt-6">
-            <BookingsAdmin bookings={bookings} onStatus={store.updateBookingStatus} />
+            <OrdersAdmin />
           </TabsContent>
 
           <TabsContent value="cupons" className="mt-6">
