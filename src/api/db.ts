@@ -1,9 +1,6 @@
-import { Pool, neonConfig } from '@neondatabase/serverless'
+import { Pool } from '@neondatabase/serverless'
 import { PrismaNeon } from '@prisma/adapter-neon'
 import { PrismaClient } from '@prisma/client'
-import ws from 'ws'
-
-neonConfig.webSocketConstructor = ws
 
 const connectionString = 'postgresql://neondb_owner:npg_u6p0jDgsQBUl@ep-cold-dew-axt1axy2-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require'
 const pool = new Pool({ connectionString })
