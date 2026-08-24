@@ -153,10 +153,6 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
-      </body>
-    </html>
-  );
-}
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
