@@ -32,7 +32,7 @@ interface CatalogState {
   user: SessionUser | null;
 }
 
-const STORAGE_KEY = "voar-brasil-state-v1";
+const STORAGE_KEY = "voar-brasil-state-v2";
 
 const initialState: CatalogState = {
   destinations: seedDestinations,
