@@ -154,7 +154,54 @@ export function PackagesAdmin() {
                 <Label>Preço Original (R$ - Riscado)</Label>
                 <Input type="number" value={form.oldPrice} onChange={(e) => setForm({ ...form, oldPrice: Number(e.target.value) })} />
               </div>
-              <div className="col-span-2 mt-4 font-semibold border-b pb-2">Informações do Voo</div>
+              <div className="col-span-2 mt-2 font-semibold border-b pb-1">Detalhes do Pacote</div>
+              <div>
+                <Label>Origem</Label>
+                <Input value={form.origin} onChange={(e) => setForm({ ...form, origin: e.target.value })} />
+              </div>
+              <div className="flex flex-col justify-end space-y-2">
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.transfer} onCheckedChange={(val) => setForm({ ...form, transfer: val })} />
+                  <Label>Inclui Traslado (Transfer)</Label>
+                </div>
+              </div>
+              <div>
+                <Label>Data de Ida</Label>
+                <Input value={form.departure} onChange={(e) => setForm({ ...form, departure: e.target.value })} placeholder="ex: 10 de out. de 2026" />
+              </div>
+              <div>
+                <Label>Data de Volta</Label>
+                <Input value={form.ret} onChange={(e) => setForm({ ...form, ret: e.target.value })} placeholder="ex: 17 de out. de 2026" />
+              </div>
+              <div>
+                <Label>Regime de Alimentação</Label>
+                <Select value={form.board} onValueChange={(val: any) => setForm({ ...form, board: val })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Café da manhã">Café da manhã</SelectItem>
+                    <SelectItem value="Meia pensão">Meia pensão</SelectItem>
+                    <SelectItem value="Pensão completa">Pensão completa</SelectItem>
+                    <SelectItem value="All inclusive">All inclusive</SelectItem>
+                    <SelectItem value="Sem refeições">Sem refeições</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Parcelamento Máx. (vezes)</Label>
+                <Input type="number" value={form.installments} onChange={(e) => setForm({ ...form, installments: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Vagas Restantes</Label>
+                <Input type="number" value={form.seats} onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })} />
+              </div>
+              <div className="flex flex-col justify-end space-y-2">
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.featured} onCheckedChange={(val) => setForm({ ...form, featured: val })} />
+                  <Label>Destacar na Home (Ofertas)</Label>
+                </div>
+              </div>
+              
+              <div className="col-span-2 mt-4 font-semibold border-b pb-1">Informações do Voo</div>
               <div>
                 <Label>Cia Aérea</Label>
                 <Input value={flightForm.airline} onChange={(e) => setFlightForm({ ...flightForm, airline: e.target.value })} />
@@ -162,6 +209,18 @@ export function PackagesAdmin() {
               <div>
                 <Label>Bagagem</Label>
                 <Input value={flightForm.baggage} onChange={(e) => setFlightForm({ ...flightForm, baggage: e.target.value })} />
+              </div>
+              <div>
+                <Label>Horário de Ida</Label>
+                <Input value={flightForm.outboundTime} onChange={(e) => setFlightForm({ ...flightForm, outboundTime: e.target.value })} placeholder="ex: 09:00 - 10:15" />
+              </div>
+              <div>
+                <Label>Horário de Volta</Label>
+                <Input value={flightForm.returnTime} onChange={(e) => setFlightForm({ ...flightForm, returnTime: e.target.value })} placeholder="ex: 16:00 - 17:15" />
+              </div>
+              <div>
+                <Label>Paradas / Escalas</Label>
+                <Input type="number" value={flightForm.stops} onChange={(e) => setFlightForm({ ...flightForm, stops: Number(e.target.value) })} />
               </div>
             </div>
             <DialogFooter>

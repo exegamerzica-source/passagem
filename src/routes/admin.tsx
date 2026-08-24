@@ -31,6 +31,7 @@ import { SettingsAdmin } from "@/components/admin/SettingsAdmin";
 import { OrdersAdmin } from "@/components/admin/OrdersAdmin";
 import { PackagesAdmin } from "@/components/admin/PackagesAdmin";
 import { CouponsAdmin } from "@/components/admin/CouponsAdmin";
+import { CatalogAdmin } from "@/components/admin/CatalogAdmin";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -144,47 +145,8 @@ function Admin() {
             <CouponsAdmin />
           </TabsContent>
 
-          <TabsContent value="catalogo" className="mt-6 grid gap-6 lg:grid-cols-2">
-            <div className="surface-card p-5">
-              <h2 className="text-lg font-bold">Destinos</h2>
-              <ul className="mt-3 divide-y divide-border">
-                {destinations.map((d) => (
-                  <li key={d.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
-                    <span>
-                      <span className="font-semibold">{d.name}</span>{" "}
-                      <span className="text-xs text-muted-foreground">
-                        {d.uf} • {d.region}
-                      </span>
-                    </span>
-                    <Switch
-                      checked={d.active}
-                      onCheckedChange={() => store.toggleActive("destinations", d.id)}
-                      aria-label={`Ativar destino ${d.name}`}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="surface-card p-5">
-              <h2 className="text-lg font-bold">Hotéis</h2>
-              <ul className="mt-3 divide-y divide-border">
-                {hotels.map((h) => (
-                  <li key={h.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
-                    <span>
-                      <span className="font-semibold">{h.name}</span>{" "}
-                      <span className="text-xs text-muted-foreground">
-                        {h.stars}★ • {brl(h.nightPrice)}/noite
-                      </span>
-                    </span>
-                    <Switch
-                      checked={h.active}
-                      onCheckedChange={() => store.toggleActive("hotels", h.id)}
-                      aria-label={`Ativar hotel ${h.name}`}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <TabsContent value="catalogo" className="mt-6">
+            <CatalogAdmin />
           </TabsContent>
 
           <TabsContent value="clientes" className="mt-6">
