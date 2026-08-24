@@ -2,6 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Headset, LogOut, Menu, ShieldCheck, Ticket, User } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { Route as rootRoute } from "@/routes/__root";
+import { getText } from "@/data/texts";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -14,16 +16,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useStore } from "@/data/store";
 
-const NAV = [
-  { to: "/pacotes", label: "Pacotes" },
-  { to: "/hoteis", label: "Hotéis" },
-  { to: "/voos", label: "Voos" },
-  { to: "/ofertas", label: "Ofertas" },
-  { to: "/destinos", label: "Destinos" },
+const getNav = (texts: any) => [
+  { to: "/pacotes", label: getText(texts, "navPackages") },
+  { to: "/hoteis", label: getText(texts, "navHotels") },
+  { to: "/voos", label: getText(texts, "navFlights") },
+  { to: "/ofertas", label: getText(texts, "navDeals") },
 ] as const;
 
 export function Header() {
   const { user, logout } = useStore();
+  const { settings } = rootRoute.useLoaderData();
+  const texts = settings?.siteTexts || {};
+  const NAV = getNav(texts);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -40,7 +44,7 @@ export function Header() {
               Central de vendas: (11) 4002-8922
             </a>
             <Link to="/suporte" className="hover:underline">
-              Atendimento
+              {getText(texts, "navSupport")}
             </Link>
           </p>
         </div>
@@ -66,12 +70,12 @@ export function Header() {
         <div className="ml-auto flex items-center gap-2">
           <Button asChild variant="ghost" size="sm" className="hidden xl:inline-flex">
             <Link to="/suporte">
-              <Headset aria-hidden="true" /> Suporte
+              <Headset aria-hidden="true" /> {getText(texts, "navSupport")}
             </Link>
           </Button>
           <Button asChild variant="soft" size="sm" className="hidden md:inline-flex">
             <Link to="/minhas-viagens">
-              <Ticket aria-hidden="true" /> Minhas viagens
+              <Ticket aria-hidden="true" /> {getText(texts, "navMyTrips")}
             </Link>
           </Button>
 
@@ -92,7 +96,7 @@ export function Header() {
                   <Link to="/minhas-viagens">Minhas viagens</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/admin">Painel administrativo</Link>
+                  <Link to="/admin">{getText(texts, "navAdmin")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -107,7 +111,7 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <Button asChild size="sm" variant="highlight" className="hidden sm:inline-flex">
-              <Link to="/entrar">Entrar ou cadastrar</Link>
+              <Link to="/entrar">{getText(texts, "navLogin")}</Link>
             </Button>
           )}
 
@@ -169,7 +173,7 @@ export function Header() {
                   ) : (
                     <Button asChild variant="highlight" className="w-full">
                       <Link to="/entrar" onClick={() => setOpen(false)}>
-                        Entrar ou cadastrar
+                        {getText(texts, "navLogin")}
                       </Link>
                     </Button>
                   )}

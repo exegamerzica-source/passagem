@@ -3,14 +3,14 @@ import { Logo } from "./Logo";
 import { Route as rootRoute } from "@/routes/__root";
 import { getText } from "@/data/texts";
 
-const COLUMNS = [
+const getColumns = (texts: any) => [
   {
     title: "Viagens",
     links: [
-      { to: "/pacotes", label: "Pacotes" },
-      { to: "/hoteis", label: "Hotéis" },
-      { to: "/voos", label: "Voos" },
-      { to: "/ofertas", label: "Ofertas" },
+      { to: "/pacotes", label: getText(texts, "navPackages") },
+      { to: "/hoteis", label: getText(texts, "navHotels") },
+      { to: "/voos", label: getText(texts, "navFlights") },
+      { to: "/ofertas", label: getText(texts, "navDeals") },
     ],
   },
   {
@@ -27,6 +27,7 @@ const COLUMNS = [
 export function Footer() {
   const { settings } = rootRoute.useLoaderData();
   const texts = settings?.siteTexts || {};
+  const COLUMNS = getColumns(texts);
 
   return (
     <footer className="mt-16 border-t border-border bg-primary-deep text-primary-foreground">
@@ -72,17 +73,17 @@ export function Footer() {
             </li>
             <li>
               <Link to="/suporte" className="text-primary-foreground/70 transition-colors hover:text-highlight">
-                Central de ajuda
+                {getText(texts, "navSupport")}
               </Link>
             </li>
             <li>
               <Link to="/minhas-viagens" className="text-primary-foreground/70 transition-colors hover:text-highlight">
-                Minhas viagens
+                {getText(texts, "navMyTrips")}
               </Link>
             </li>
             <li>
               <Link to="/admin" className="text-primary-foreground/70 transition-colors hover:text-highlight">
-                Área administrativa
+                {getText(texts, "navAdmin")}
               </Link>
             </li>
           </ul>

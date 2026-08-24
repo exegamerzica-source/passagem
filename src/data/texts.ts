@@ -1,4 +1,13 @@
 export const defaultSiteTexts: Record<string, { label: string, default: string, isTextarea?: boolean }> = {
+  navPackages: { label: "Navegação: Pacotes", default: "Pacotes" },
+  navHotels: { label: "Navegação: Hotéis", default: "Hotéis" },
+  navFlights: { label: "Navegação: Voos", default: "Voos" },
+  navDeals: { label: "Navegação: Ofertas", default: "Ofertas" },
+  navSupport: { label: "Navegação: Suporte", default: "Suporte" },
+  navMyTrips: { label: "Navegação: Minhas Viagens", default: "Minhas viagens" },
+  navLogin: { label: "Navegação: Entrar", default: "Entrar" },
+  navAdmin: { label: "Navegação: Admin", default: "Área administrativa" },
+
   heroBadge: { label: "Hero: Selo Promoção", default: "🔥 Oferta Exclusiva" },
   heroTitle: { label: "Hero: Título Principal", default: "Viaje mais. Pague menos. Viva o melhor!" },
   heroSubtitle: { label: "Hero: Subtítulo", default: "Aproveite nossa promoção relâmpago. Garanta já a sua viagem com tudo incluso e pague em até 12x sem juros.", isTextarea: true },
@@ -55,6 +64,6 @@ export const defaultSiteTexts: Record<string, { label: string, default: string, 
 };
 
 export function getText(texts: Record<string, string> | undefined, key: keyof typeof defaultSiteTexts) {
-  if (!texts) return defaultSiteTexts[key].default;
-  return texts[key] !== undefined && texts[key] !== "" ? texts[key] : defaultSiteTexts[key].default;
+  if (!texts || texts[key] === undefined) return defaultSiteTexts[key]?.default ?? "";
+  return texts[key];
 }
