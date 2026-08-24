@@ -41,6 +41,7 @@ function Home() {
   const { settings } = rootRoute.useLoaderData();
   const banner = settings?.bannerBase64 || settings?.banner_base64 || settings?.BANNERBASE64;
   const heroBg = banner && banner.length > 100 ? banner : heroImage;
+  const texts = settings?.siteTexts || {};
 
   return (
     <SiteLayout>
@@ -53,13 +54,13 @@ function Home() {
             <div className="flex-1 text-primary-foreground space-y-6 w-full order-last md:order-first">
               <div>
                 <span className="inline-block bg-highlight text-highlight-foreground px-3 py-1 text-sm font-bold uppercase rounded-full mb-4">
-                  🔥 Oferta Exclusiva
+                  {texts.heroBadge || "🔥 Oferta Exclusiva"}
                 </span>
                 <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
-                  Viaje mais. Pague menos. Viva o melhor!
+                  {texts.heroTitle || "Viaje mais. Pague menos. Viva o melhor!"}
                 </h1>
-                <p className="text-primary-foreground/90 text-lg">
-                  Aproveite nossa promoção relâmpago. Garanta já a sua viagem com tudo incluso e pague em até 12x sem juros.
+                <p className="text-primary-foreground/90 text-lg whitespace-pre-wrap">
+                  {texts.heroSubtitle || "Aproveite nossa promoção relâmpago. Garanta já a sua viagem com tudo incluso e pague em até 12x sem juros."}
                 </p>
               </div>
               <div className="w-full">
@@ -86,34 +87,31 @@ function Home() {
           </div>
         ) : (
           // Layout padrão se não houver banner promocional (hero default)
-          <div className="relative isolate">
-            <img
-              src={heroBg}
-              alt="Imagem de destaque da loja"
-              width={1920}
-              height={1080}
-              className="absolute inset-0 -z-10 size-full object-cover transition-opacity duration-500"
-            />
-            <div className="absolute inset-0 -z-10 bg-gradient-hero" aria-hidden="true" />
-            <div className="container-page pb-8 pt-12 md:pb-14 md:pt-20">
-              <div className="max-w-2xl text-primary-foreground">
-                <p className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur">
-                  <Sparkles className="size-3.5 text-highlight" aria-hidden="true" />
-                  Mais de 320 mil viajantes atendidos
-                </p>
-                <h1 className="mt-4 text-3xl font-extrabold leading-tight md:text-5xl">
-                  Sua próxima viagem começa com o melhor preço do Brasil
-                </h1>
-                <p className="mt-3 max-w-xl text-sm text-primary-foreground/85 md:text-base">
-                  Pacotes com voo, hotel e traslado, hotéis auditados e voos nacionais. Reserve em minutos e pague em até
-                  12x sem juros.
-                </p>
-              </div>
-              <div className="mt-6 md:mt-8">
+          // Layout padrão (Buscador centralizado, imagem de fundo opaca)
+          <>
+            <div className="absolute inset-0">
+              <img src={heroImage} alt="Fundo" className="h-full w-full object-cover opacity-20" />
+            </div>
+            <div className="container-page relative z-10 pb-16 pt-10 md:pt-16">
+              <div className="mx-auto max-w-4xl text-center">
+                <div className="flex flex-col items-center">
+                  <p className="inline-flex items-center gap-1.5 rounded-full bg-highlight/20 px-3 py-1 text-sm font-semibold text-highlight">
+                    <Sparkles className="size-3.5 text-highlight" aria-hidden="true" />
+                    Mais de 320 mil viajantes atendidos
+                  </p>
+                  <h1 className="mt-4 text-3xl font-extrabold leading-tight md:text-5xl">
+                    {texts.heroTitle || "Sua próxima viagem começa com o melhor preço do Brasil"}
+                  </h1>
+                  <p className="mt-3 max-w-xl text-sm text-primary-foreground/85 md:text-base whitespace-pre-wrap">
+                    {texts.heroSubtitle || "Pacotes com voo, hotel e traslado, hotéis auditados e voos nacionais. Reserve em minutos e pague em até 12x sem juros."}
+                  </p>
+                </div>
+                <div className="mt-6 md:mt-8">
                 <SearchWidget />
               </div>
             </div>
           </div>
+        </>
         )}
       </section>
 

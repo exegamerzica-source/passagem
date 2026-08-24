@@ -16,13 +16,13 @@ export const getStoreSettings = createServerFn({ method: 'POST' })
   })
 
 export const updateStoreSettings = createServerFn({ method: 'POST' })
-  .validator((data: { storeName?: string; cnpj?: string; logoBase64?: string; bannerBase64?: string }) => data)
+  .validator((data: { storeName?: string; cnpj?: string; logoBase64?: string; bannerBase64?: string; siteTexts?: Record<string, string> }) => data)
   .handler(async ({ data }) => {
     const existing = await sql`SELECT id FROM "StoreSettings" LIMIT 1`
     if (existing.length === 0) {
       const rows = await sql`
-        INSERT INTO "StoreSettings" (id, "storeName", cnpj, "logoBase64", "bannerBase64", "updatedAt")
-        VALUES (gen_random_uuid()::text, ${data.storeName ?? null}, ${data.cnpj ?? null}, ${data.logoBase64 ?? null}, ${data.bannerBase64 ?? null}, NOW())
+        INSERT INTO "StoreSettings" (id, "storeName", cnpj, "logoBase64", "bannerBase64", "siteTexts", "updatedAt")
+        VALUES (gen_random_uuid()::text, ${data.storeName ?? null}, ${data.cnpj ?? null}, ${data.logoBase64 ?? null}, ${data.bannerBase64 ?? null}, ${data.siteTexts ? JSON.stringify(data.siteTexts) : '{}'}::jsonb, NOW())
         RETURNING *
       `
       return rows[0]
@@ -34,6 +34,7 @@ export const updateStoreSettings = createServerFn({ method: 'POST' })
           "cnpj" = COALESCE(${data.cnpj ?? null}, "cnpj"),
           "logoBase64" = CASE WHEN ${data.logoBase64 ?? null}::text IS NOT NULL THEN ${data.logoBase64 ?? null} ELSE "logoBase64" END,
           "bannerBase64" = CASE WHEN ${data.bannerBase64 ?? null}::text IS NOT NULL THEN ${data.bannerBase64 ?? null} ELSE "bannerBase64" END,
+          "siteTexts" = CASE WHEN ${data.siteTexts ? JSON.stringify(data.siteTexts) : null}::text IS NOT NULL THEN ${data.siteTexts ? JSON.stringify(data.siteTexts) : null}::jsonb ELSE "siteTexts" END,
           "updatedAt" = NOW()
         WHERE id = ${id}
         RETURNING *

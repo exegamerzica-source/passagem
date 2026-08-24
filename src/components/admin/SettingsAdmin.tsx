@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { getStoreSettings, updateStoreSettings } from "@/api/settings";
 
 export function SettingsAdmin() {
@@ -10,6 +11,7 @@ export function SettingsAdmin() {
   const [storeName, setStoreName] = useState("");
   const [logoBase64, setLogoBase64] = useState<string>("");
   const [bannerBase64, setBannerBase64] = useState<string>("");
+  const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -19,6 +21,7 @@ export function SettingsAdmin() {
         setStoreName(settings.storeName || "");
         setLogoBase64(settings.logoBase64 || "");
         setBannerBase64(settings.bannerBase64 || "");
+        setSiteTexts(settings.siteTexts || {});
       }
     });
   }, []);
@@ -42,7 +45,7 @@ export function SettingsAdmin() {
     try {
       await updateStoreSettings({
         data: {
-          cnpj, storeName, logoBase64, bannerBase64
+          cnpj, storeName, logoBase64, bannerBase64, siteTexts
         }
       });
       toast.success("Configuraues salvas com sucesso!");
@@ -50,6 +53,10 @@ export function SettingsAdmin() {
       toast.error("Erro ao salvar configuraues");
     }
     setLoading(false);
+  };
+
+  const updateText = (key: string, val: string) => {
+    setSiteTexts(prev => ({ ...prev, [key]: val }));
   };
 
   return (
@@ -77,6 +84,36 @@ export function SettingsAdmin() {
           <Label>Banner Principal</Label>
           <Input type="file" accept="image/*" onChange={e => handleFileChange(e, setBannerBase64)} />
           {bannerBase64 && <img src={bannerBase64} alt="Banner Preview" className="h-24 w-full object-cover border p-1 rounded" />}
+        </div>
+      </div>
+
+      <div className="mt-8 border-t pt-8">
+        <h3 className="text-lg font-bold mb-4">Textos do Site</h3>
+        <div className="grid gap-4">
+          <div>
+            <Label>Título Principal (Home)</Label>
+            <Input 
+              value={siteTexts.heroTitle || ""} 
+              onChange={e => updateText("heroTitle", e.target.value)} 
+              placeholder="Viaje mais. Pague menos. Viva o melhor!" 
+            />
+          </div>
+          <div>
+            <Label>Subtítulo Principal (Home)</Label>
+            <Textarea 
+              value={siteTexts.heroSubtitle || ""} 
+              onChange={e => updateText("heroSubtitle", e.target.value)} 
+              placeholder="Aproveite nossa promoção relâmpago. Garanta já a sua viagem..." 
+            />
+          </div>
+          <div>
+            <Label>Selo / Tag de Promoção (Ex: Oferta Exclusiva)</Label>
+            <Input 
+              value={siteTexts.heroBadge || ""} 
+              onChange={e => updateText("heroBadge", e.target.value)} 
+              placeholder="🔥 Oferta Exclusiva" 
+            />
+          </div>
         </div>
       </div>
 
