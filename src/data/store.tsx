@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { getDestinations, getHotels, getPackages, getBanners, getCoupons, getCustomers, createDestination, updateDestination, deleteDestination, createHotel, updateHotel, deleteHotel, createPackage, updatePackage, deletePackage, createCoupon, updateCoupon, deleteCoupon } from "@/api/catalog";
 import {
   seedBanners,
   seedBookings,
@@ -66,13 +67,43 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // Attempt to load local state first for fast render
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) setState({ ...initialState, ...(JSON.parse(raw) as CatalogState) });
     } catch {
       /* estado padrão */
     }
-    setReady(true);
+    
+    // Then fetch from database to sync
+    const fetchDB = async () => {
+      try {
+        const [dbDestinations, dbHotels, dbPackages, dbBanners, dbCoupons, dbCustomers] = await Promise.all([
+          getDestinations(),
+          getHotels(),
+          getPackages(),
+          getBanners(),
+          getCoupons(),
+          getCustomers(),
+        ]);
+        
+        setState(prev => ({
+          ...prev,
+          destinations: dbDestinations as any,
+          hotels: dbHotels as any,
+          packages: dbPackages as any,
+          banners: dbBanners as any,
+          coupons: dbCoupons as any,
+          customers: dbCustomers as any,
+        }));
+      } catch (err) {
+        console.error("Failed to sync store with DB", err);
+      } finally {
+        setReady(true);
+      }
+    };
+    
+    fetchDB();
   }, []);
 
   useEffect(() => {
@@ -88,25 +119,63 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setState((prev) => {
       const list = prev[entity] as { id: string }[];
       const exists = list.some((i) => i.id === item.id);
+      
+      // Fire DB sync in background
+      try {
+        if (entity === "packages") {
+          exists ? updatePackage({ data: item }) : createPackage({ data: item });
+        } else if (entity === "destinations") {
+          exists ? updateDestination({ data: item }) : createDestination({ data: item });
+        } else if (entity === "hotels") {
+          exists ? updateHotel({ data: item }) : createHotel({ data: item });
+        } else if (entity === "coupons") {
+          exists ? updateCoupon({ data: item }) : createCoupon({ data: item });
+        }
+      } catch(e) { console.error("Sync error", e) }
+
       const next = exists ? list.map((i) => (i.id === item.id ? item : i)) : [...list, item];
       return { ...prev, [entity]: next } as CatalogState;
     });
   }, []);
 
   const remove = useCallback((entity: Entity, id: string) => {
-    setState((prev) => ({
-      ...prev,
-      [entity]: (prev[entity] as { id: string }[]).filter((i) => i.id !== id),
-    }));
+    setState((prev) => {
+      // Fire DB sync in background
+      try {
+        if (entity === "packages") deletePackage({ data: { id } });
+        else if (entity === "destinations") deleteDestination({ data: { id } });
+        else if (entity === "hotels") deleteHotel({ data: { id } });
+        else if (entity === "coupons") deleteCoupon({ data: { id } });
+      } catch(e) { console.error("Sync error", e) }
+
+      return {
+        ...prev,
+        [entity]: (prev[entity] as { id: string }[]).filter((i) => i.id !== id),
+      };
+    });
   }, []);
 
   const toggleActive = useCallback((entity: Entity, id: string) => {
-    setState((prev) => ({
-      ...prev,
-      [entity]: (prev[entity] as { id: string; active: boolean }[]).map((i) =>
-        i.id === id ? { ...i, active: !i.active } : i,
-      ),
-    }));
+    setState((prev) => {
+      const list = prev[entity] as { id: string; active: boolean }[];
+      const nextList = list.map((i) => i.id === id ? { ...i, active: !i.active } : i);
+      const updatedItem = nextList.find((i) => i.id === id);
+
+      // Fire DB sync in background
+      if (updatedItem) {
+        try {
+          if (entity === "packages") updatePackage({ data: updatedItem });
+          else if (entity === "destinations") updateDestination({ data: updatedItem });
+          else if (entity === "hotels") updateHotel({ data: updatedItem });
+          else if (entity === "coupons") updateCoupon({ data: updatedItem });
+        } catch(e) { console.error("Sync error", e) }
+      }
+
+      return {
+        ...prev,
+        [entity]: nextList,
+      };
+    });
   }, []);
 
   const addBooking = useCallback((booking: Omit<Booking, "id" | "code" | "createdAt">) => {
