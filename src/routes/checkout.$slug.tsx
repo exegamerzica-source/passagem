@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import type { PaymentProof, Traveler } from "@/data/types";
 import { PIX_ACCOUNT, PROOF_MAX_BYTES } from "@/data/pix";
 import { createOrder } from "@/api/orders";
-import { validateCPF, validateLuhn } from "@/lib/validations";
+import { validateCPF, validateLuhn, formatCPF } from "@/lib/validations";
 import { Route as rootRoute } from "./__root";
 import { getText } from "@/data/texts";
 
@@ -407,7 +407,7 @@ function Checkout() {
                             placeholder="000.000.000-00"
                             onChange={(e) =>
                               setTravelers((prev) =>
-                                prev.map((p, j) => (j === i ? { ...p, document: e.target.value } : p)),
+                                prev.map((p, j) => (j === i ? { ...p, document: formatCPF(e.target.value) } : p)),
                               )
                             }
                           />
@@ -453,7 +453,7 @@ function Checkout() {
                       id="cpf-resp"
                       value={contact.cpf}
                       inputMode="numeric"
-                      onChange={(e) => setContact({ ...contact, cpf: e.target.value })}
+                      onChange={(e) => setContact({ ...contact, cpf: formatCPF(e.target.value) })}
                     />
                   </div>
                   <div>

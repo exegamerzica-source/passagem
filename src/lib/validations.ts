@@ -47,3 +47,12 @@ export function validateLuhn(cardNumber: string): boolean {
   
   return (sum % 10) === 0;
 }
+
+export function formatCPF(v: string): string {
+  v = v.replace(/\D/g, '');
+  if (v.length > 11) v = v.slice(0, 11);
+  v = v.replace(/(\d{3})(\d)/, '$1.$2');
+  v = v.replace(/(\d{3})(\d)/, '$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  return v;
+}
