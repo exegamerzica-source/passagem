@@ -6,11 +6,11 @@ export const brlCents = (value: number) =>
 
 export const installment = (total: number, times = 10) => `Em até ${times}x de ${brlCents(total / times)} sem juros`;
 
-export const dateBR = (iso: string) =>
-  new Date(`${iso}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+export const dateBR = (iso: string | null | undefined) =>
+  iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }) : "Data a definir";
 
-export const dateShort = (iso: string) =>
-  new Date(`${iso}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+export const dateShort = (iso: string | null | undefined) =>
+  iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : "";
 
 export const slugify = (v: string) =>
   v

@@ -10,10 +10,11 @@ import { seedPackages } from "@/data/seed";
 import { brl, brlCents, dateBR, discountPct } from "@/lib/format";
 
 export const Route = createFileRoute("/pacotes/$slug")({
-  loader: ({ params }) => {
-    const pkg = seedPackages.find((p) => p.slug === params.slug);
-    if (!pkg) throw notFound();
-    return { title: pkg.title, nights: pkg.nights, price: pkg.price, board: pkg.board };
+  loader: async ({ params }) => {
+    const items = await getPackages();
+    const item = items.find((p: any) => p.slug === params.slug);
+    if (!item) throw notFound();
+    return { title: item.title, nights: item.nights, price: item.price, board: item.board };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {

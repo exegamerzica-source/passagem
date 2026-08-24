@@ -10,10 +10,11 @@ import { img } from "@/data/images";
 import { seedDestinations } from "@/data/seed";
 
 export const Route = createFileRoute("/destinos/$slug")({
-  loader: ({ params }) => {
-    const dest = seedDestinations.find((d) => d.slug === params.slug);
-    if (!dest) throw notFound();
-    return { name: dest.name, uf: dest.uf, short: dest.short };
+  loader: async ({ params }) => {
+    const items = await getDestinations();
+    const item = items.find((p: any) => p.slug === params.slug);
+    if (!item) throw notFound();
+    return { name: item.name, uf: item.uf };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {

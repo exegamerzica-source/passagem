@@ -10,10 +10,11 @@ import { seedHotels } from "@/data/seed";
 import { brl } from "@/lib/format";
 
 export const Route = createFileRoute("/hoteis/$slug")({
-  loader: ({ params }) => {
-    const hotel = seedHotels.find((h) => h.slug === params.slug);
-    if (!hotel) throw notFound();
-    return { name: hotel.name, description: hotel.description, stars: hotel.stars };
+  loader: async ({ params }) => {
+    const items = await getHotels();
+    const item = items.find((p: any) => p.slug === params.slug);
+    if (!item) throw notFound();
+    return { name: item.name, stars: item.stars, price: item.nightPrice };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
