@@ -50,7 +50,7 @@ function Home() {
           // Layout quando há um banner promocional (como o flyer do Rio)
           <div className="container-page pb-8 pt-4 md:pt-8 flex flex-col md:flex-row gap-8 items-center">
             {/* Texto / Buscador na esquerda */}
-            <div className="flex-1 text-primary-foreground space-y-6 w-full">
+            <div className="flex-1 text-primary-foreground space-y-6 w-full order-last md:order-first">
               <div>
                 <span className="inline-block bg-highlight text-highlight-foreground px-3 py-1 text-sm font-bold uppercase rounded-full mb-4">
                   🔥 Oferta Exclusiva
@@ -68,12 +68,12 @@ function Home() {
             </div>
             
             {/* Poster / Banner na direita (clicável para o checkout) */}
-            <div className="w-full md:w-[400px] flex-shrink-0 group relative shadow-2xl rounded-2xl overflow-hidden border-4 border-highlight transition-transform hover:-translate-y-2">
+            <div className="w-full md:w-[400px] flex-shrink-0 group relative shadow-2xl rounded-2xl overflow-hidden border-4 border-highlight transition-transform hover:-translate-y-2 order-first md:order-last">
               <Link to="/checkout/rio-de-janeiro-promo-casal" className="block focus:outline-none">
                 <img 
                   src={heroBg} 
                   alt="Promoção exclusiva" 
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover max-h-[60vh] md:max-h-none object-top"
                 />
                 {/* Sobreposição de hover para incentivar o clique */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
