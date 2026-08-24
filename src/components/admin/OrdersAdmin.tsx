@@ -1,42 +1,62 @@
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getOrders } from "@/api/orders";
-import { brl, dateBR } from "@/lib/format";
+import { brl } from "@/lib/format";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+
+function formatDate(val: any) {
+  if (!val) return "—";
+  try {
+    return new Date(val).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return String(val);
+  }
+}
+
+function statusColor(status: string) {
+  if (status === "Confirmado" || status === "Pago") return "bg-green-100 text-green-800";
+  if (status === "Cancelado") return "bg-red-100 text-red-800";
+  return "bg-yellow-100 text-yellow-800";
+}
 
 export function OrdersAdmin() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
-
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getOrders().then(data => {
-      setOrders(data);
-      setLoading(false);
-    }).catch(e => {
-      setError(e.message || "Erro desconhecido");
-      setLoading(false);
-    });
+    getOrders()
+      .then((data) => {
+        setOrders(data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e.message || "Erro desconhecido");
+        setLoading(false);
+      });
   }, []);
 
   if (error) return <div className="p-4 text-center text-red-500">Erro ao carregar: {error}</div>;
-
-  if (loading) return <div className="p-4 text-center">Carregando pedidos reais do banco...</div>;
-
+  if (loading) return <div className="p-4 text-center">Carregando pedidos do banco...</div>;
   if (orders.length === 0) return <div className="p-4 text-center text-muted-foreground">Nenhum pedido recebido ainda.</div>;
 
   return (
-    <div className="surface-card overflow-x-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Pedidos Conectados ao Neon</h2>
+    <div className="overflow-x-auto p-4">
+      <h2 className="text-xl font-bold mb-4">Pedidos — Banco de Dados</h2>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Cdigo</TableHead>
-            <TableHead>Cliente (Real)</TableHead>
+            <TableHead>Código</TableHead>
+            <TableHead>Cliente</TableHead>
+            <TableHead>Produto</TableHead>
             <TableHead>Data</TableHead>
             <TableHead>Pagamento</TableHead>
             <TableHead className="text-right">Total</TableHead>
@@ -45,28 +65,30 @@ export function OrdersAdmin() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((b) => (
-            <TableRow key={b.id}>
-              <TableCell className="font-bold">{b.code}</TableCell>
+          {orders.map((o) => (
+            <TableRow key={o.id}>
+              <TableCell className="font-bold text-xs">{o.code}</TableCell>
               <TableCell>
-                <span className="font-semibold">{b.customer?.name}</span>
-                <br />
-                <span className="text-xs text-muted-foreground">{b.customer?.email}</span>
+                <span className="font-semibold block">{o.customer?.name}</span>
+                <span className="text-xs text-muted-foreground">{o.customer?.email}</span>
               </TableCell>
-              <TableCell className="text-xs">{dateBR(b.createdAt)}</TableCell>
-              <TableCell className="max-w-48 text-xs text-muted-foreground">{b.paymentMethod}</TableCell>
-              <TableCell className="text-right font-semibold text-primary">{brl(b.total)}</TableCell>
+              <TableCell className="text-xs max-w-40">
+                {o.package?.title || o.flight?.airline
+                  ? (o.package?.title || `${o.flight?.origin} → ${o.flight?.destination}`)
+                  : o.hotel?.name || "—"}
+              </TableCell>
+              <TableCell className="text-xs whitespace-nowrap">{formatDate(o.createdAt)}</TableCell>
+              <TableCell className="text-xs max-w-40 text-muted-foreground">{o.paymentMethod}</TableCell>
+              <TableCell className="text-right font-semibold text-primary">{brl(o.total)}</TableCell>
               <TableCell>
-                <Select value={b.status} disabled>
-                  <SelectTrigger className="w-36">
-                    <SelectValue />
-                  </SelectTrigger>
-                </Select>
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor(o.status)}`}>
+                  {o.status}
+                </span>
               </TableCell>
               <TableCell>
-                <button 
+                <button
                   className="text-xs text-primary underline font-bold cursor-pointer"
-                  onClick={() => setSelectedOrder(b)}
+                  onClick={() => setSelectedOrder(o)}
                 >
                   Ver tudo
                 </button>
@@ -77,23 +99,52 @@ export function OrdersAdmin() {
       </Table>
 
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalhes do Pedido {selectedOrder?.code}</DialogTitle>
+            <DialogTitle>Pedido {selectedOrder?.code}</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-4">
-              <div className="bg-secondary p-3 rounded text-sm">
-                <p><strong>Cliente:</strong> {selectedOrder.customer?.name}</p>
-                <p><strong>Email:</strong> {selectedOrder.customer?.email}</p>
-                <p><strong>Telefone:</strong> {selectedOrder.customer?.phone || 'N/A'}</p>
-                <p><strong>CPF:</strong> {selectedOrder.customer?.cpf || 'N/A'}</p>
+            <div className="space-y-4 text-sm">
+              {/* Dados do Cliente */}
+              <div className="bg-muted p-3 rounded-lg space-y-1">
+                <p className="font-semibold text-base mb-2">👤 Dados do Cliente</p>
+                <p><strong>Nome:</strong> {selectedOrder.customer?.name || "—"}</p>
+                <p><strong>Email:</strong> {selectedOrder.customer?.email || "—"}</p>
+                <p><strong>Telefone:</strong> {selectedOrder.customer?.phone || "—"}</p>
+                <p><strong>CPF:</strong> {selectedOrder.customer?.cpf || "—"}</p>
               </div>
-              <div className="bg-secondary p-3 rounded text-sm">
-                <p><strong>Produto:</strong> {selectedOrder.package?.title || 'Produto Removido'}</p>
-                <p><strong>Data da Compra:</strong> {dateBR(selectedOrder.createdAt)}</p>
-                <p><strong>Mtodo Pagto:</strong> {selectedOrder.paymentMethod}</p>
-                <p className="text-lg font-bold text-primary mt-2">Total: {brl(selectedOrder.total)}</p>
+
+              {/* Produto */}
+              <div className="bg-muted p-3 rounded-lg space-y-1">
+                <p className="font-semibold text-base mb-2">📦 Produto</p>
+                {selectedOrder.package && (
+                  <p><strong>Pacote:</strong> {selectedOrder.package.title}</p>
+                )}
+                {selectedOrder.flight && (
+                  <>
+                    <p><strong>Voo:</strong> {selectedOrder.flight.airline}</p>
+                    <p><strong>Rota:</strong> {selectedOrder.flight.origin} → {selectedOrder.flight.destination}</p>
+                  </>
+                )}
+                {selectedOrder.hotel && (
+                  <p><strong>Hotel:</strong> {selectedOrder.hotel.name}</p>
+                )}
+                {!selectedOrder.package && !selectedOrder.flight && !selectedOrder.hotel && (
+                  <p className="text-muted-foreground">Produto removido</p>
+                )}
+              </div>
+
+              {/* Pagamento */}
+              <div className="bg-muted p-3 rounded-lg space-y-1">
+                <p className="font-semibold text-base mb-2">💳 Pagamento</p>
+                <p><strong>Método:</strong> {selectedOrder.paymentMethod}</p>
+                <p><strong>Data da Compra:</strong> {formatDate(selectedOrder.createdAt)}</p>
+                <p><strong>Status:</strong>{" "}
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor(selectedOrder.status)}`}>
+                    {selectedOrder.status}
+                  </span>
+                </p>
+                <p className="text-xl font-bold text-primary mt-2">Total: {brl(selectedOrder.total)}</p>
               </div>
             </div>
           )}
