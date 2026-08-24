@@ -11,12 +11,19 @@ export function OrdersAdmin() {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     getOrders().then(data => {
       setOrders(data);
       setLoading(false);
+    }).catch(e => {
+      setError(e.message || "Erro desconhecido");
+      setLoading(false);
     });
   }, []);
+
+  if (error) return <div className="p-4 text-center text-red-500">Erro ao carregar: {error}</div>;
 
   if (loading) return <div className="p-4 text-center">Carregando pedidos reais do banco...</div>;
 
