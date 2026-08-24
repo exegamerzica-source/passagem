@@ -633,7 +633,7 @@ function Checkout() {
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <Label htmlFor="card-number" className="mb-1.5 text-xs font-semibold">
-                        Número do cartão (simulado)
+                        Número do cartão
                       </Label>
                       <Input
                         id="card-number"
