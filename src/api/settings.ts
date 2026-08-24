@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { sql } from './db'
 
-export const getStoreSettings = createServerFn({ method: 'GET' })
+export const getStoreSettings = createServerFn({ method: 'POST' })
   .handler(async () => {
     const rows = await sql`SELECT * FROM "StoreSettings" LIMIT 1`
     if (rows.length === 0) {
