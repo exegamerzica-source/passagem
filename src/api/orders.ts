@@ -10,7 +10,7 @@ export const getOrders = createServerFn({ method: 'GET' })
         o."extras", o."travelers", o."coupon", o."contactPhone", o."contactEmail",
         o."packageTitle",
         c.id as "customerId", c.name as "customerName", c.email as "customerEmail",
-        c.phone as "customerPhone", c.cpf as "customerCpf"
+        c.phone as "customerPhone", c.document as "customerCpf"
       FROM "Order" o
       LEFT JOIN "Customer" c ON o."customerId" = c.id
       ORDER BY o."createdAt" DESC
@@ -69,15 +69,15 @@ export const createOrder = createServerFn({ method: 'POST' })
     let customerId: string
     if (customer.length === 0) {
       const newCust = await sql`
-        INSERT INTO "Customer" (id, name, email, phone, cpf, "createdAt")
+        INSERT INTO "Customer" (id, name, email, phone, document, "createdAt")
         VALUES (gen_random_uuid()::text, ${data.customerName}, ${data.customerEmail}, ${data.customerPhone ?? null}, ${data.customerCpf ?? null}, NOW())
         RETURNING id
       `
       customerId = newCust[0].id
     } else {
       customerId = customer[0].id
-      // update phone/cpf if provided
-      await sql`UPDATE "Customer" SET phone = COALESCE(${data.customerPhone ?? null}, phone), cpf = COALESCE(${data.customerCpf ?? null}, cpf) WHERE id = ${customerId}`
+      // update phone/document if provided
+      await sql`UPDATE "Customer" SET phone = COALESCE(${data.customerPhone ?? null}, phone), document = COALESCE(${data.customerCpf ?? null}, document) WHERE id = ${customerId}`
     }
 
     // create order

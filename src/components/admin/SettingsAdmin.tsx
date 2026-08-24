@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { getStoreSettings, updateStoreSettings } from "@/api/settings";
 import { defaultSiteTexts } from "@/data/texts";
 
 export function SettingsAdmin() {
+  const router = useRouter();
   const [cnpj, setCnpj] = useState("");
   const [storeName, setStoreName] = useState("");
   const [logoBase64, setLogoBase64] = useState<string>("");
@@ -50,6 +52,7 @@ export function SettingsAdmin() {
         }
       });
       toast.success("Configurações salvas com sucesso!");
+      router.invalidate();
     } catch (e) {
       toast.error("Erro ao salvar configurações");
     }
