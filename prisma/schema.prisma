@@ -1,13 +1,81 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model StoreSettings {
+  id        String   @id @default(cuid())
+  cnpj      String?
+  storeName String?
+  logoBase64 String? @db.Text
+  bannerBase64 String? @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  cpf       String?
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  price       Float
+  imageUrl    String?
+  active      Boolean  @default(true)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Flight {
+  id          String   @id @default(cuid())
+  airline     String
+  origin      String
+  destination String
+  departure   DateTime
+  price       Float
+  active      Boolean  @default(true)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Hotel {
+  id          String   @id @default(cuid())
+  name        String
+  location    String
+  pricePerNight Float
+  imageUrl    String?
+  active      Boolean  @default(true)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id])
+  
+  packageId     String?
+  package       Package?  @relation(fields: [packageId], references: [id])
+  
+  flightId      String?
+  flight        Flight?   @relation(fields: [flightId], references: [id])
+  
+  hotelId       String?
+  hotel         Hotel?    @relation(fields: [hotelId], references: [id])
+
+  status        String   @default("Pendente")
+  total         Float
+  paymentMethod String
+  createdAt     DateTime @default(now())
 }

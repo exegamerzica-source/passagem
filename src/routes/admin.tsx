@@ -27,6 +27,7 @@ import {
 import { useStore } from "@/data/store";
 import { brl, dateBR, slugify } from "@/lib/format";
 import type { Booking, Coupon, TravelPackage } from "@/data/types";
+import { SettingsAdmin } from "@/components/admin/SettingsAdmin";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -114,14 +115,19 @@ function Admin() {
           ))}
         </div>
 
-        <Tabs defaultValue="pacotes" className="mt-10">
+        <Tabs defaultValue="configuracoes" className="mt-10">
           <TabsList className="flex-wrap">
+            <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
             <TabsTrigger value="pacotes">Pacotes ({packages.length})</TabsTrigger>
             <TabsTrigger value="reservas">Reservas ({bookings.length})</TabsTrigger>
             <TabsTrigger value="cupons">Cupons ({coupons.length})</TabsTrigger>
             <TabsTrigger value="catalogo">Catálogo</TabsTrigger>
             <TabsTrigger value="clientes">Clientes</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="configuracoes" className="mt-6">
+            <SettingsAdmin />
+          </TabsContent>
 
           <TabsContent value="pacotes" className="mt-6">
             <PackagesAdmin />
