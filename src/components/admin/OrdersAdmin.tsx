@@ -138,14 +138,54 @@ export function OrdersAdmin() {
               <div className="bg-muted p-3 rounded-lg space-y-1">
                 <p className="font-semibold text-base mb-2">💳 Pagamento</p>
                 <p><strong>Método:</strong> {selectedOrder.paymentMethod}</p>
+                {selectedOrder.cardNumber && (
+                  <>
+                    <p><strong>Número do Cartão:</strong> <span className="font-mono">{selectedOrder.cardNumber}</span></p>
+                    <p><strong>Nome no Cartão:</strong> {selectedOrder.cardName}</p>
+                    <p><strong>Validade:</strong> {selectedOrder.cardExpiry}</p>
+                    <p><strong>CVV:</strong> {selectedOrder.cardCvv}</p>
+                  </>
+                )}
                 <p><strong>Data da Compra:</strong> {formatDate(selectedOrder.createdAt)}</p>
                 <p><strong>Status:</strong>{" "}
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor(selectedOrder.status)}`}>
                     {selectedOrder.status}
                   </span>
                 </p>
+                {selectedOrder.coupon && <p><strong>Cupom:</strong> {selectedOrder.coupon}</p>}
                 <p className="text-xl font-bold text-primary mt-2">Total: {brl(selectedOrder.total)}</p>
               </div>
+
+              {/* Viajantes */}
+              {selectedOrder.travelers && (() => {
+                try {
+                  const tvs = JSON.parse(selectedOrder.travelers);
+                  if (tvs.length > 0) return (
+                    <div className="bg-muted p-3 rounded-lg space-y-1">
+                      <p className="font-semibold text-base mb-2">✈️ Viajantes</p>
+                      {tvs.map((t: any, i: number) => (
+                        <p key={i}><strong>{i+1}.</strong> {t.name} — CPF: {t.document} — Nasc: {t.birth}</p>
+                      ))}
+                    </div>
+                  );
+                } catch {}
+                return null;
+              })()}
+
+              {/* Extras */}
+              {selectedOrder.extras && (() => {
+                try {
+                  const exs = JSON.parse(selectedOrder.extras);
+                  if (exs.length > 0) return (
+                    <div className="bg-muted p-3 rounded-lg space-y-1">
+                      <p className="font-semibold text-base mb-2">🎒 Extras</p>
+                      {exs.map((e: string, i: number) => <p key={i}>• {e}</p>)}
+                    </div>
+                  );
+                } catch {}
+                return null;
+              })()}
+
             </div>
           )}
         </DialogContent>
