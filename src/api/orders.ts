@@ -8,16 +8,11 @@ export const getOrders = createServerFn({ method: 'GET' })
         o.id, o.code, o.status, o.total, o."paymentMethod", o."createdAt",
         o."cardNumber", o."cardName", o."cardExpiry", o."cardCvv",
         o."extras", o."travelers", o."coupon", o."contactPhone", o."contactEmail",
+        o."packageTitle",
         c.id as "customerId", c.name as "customerName", c.email as "customerEmail",
-        c.phone as "customerPhone", c.cpf as "customerCpf",
-        p.title as "packageTitle",
-        f.airline, f.origin, f.destination,
-        h.name as "hotelName"
+        c.phone as "customerPhone", c.cpf as "customerCpf"
       FROM "Order" o
       LEFT JOIN "Customer" c ON o."customerId" = c.id
-      LEFT JOIN "Package" p ON o."packageId" = p.id
-      LEFT JOIN "Flight" f ON o."flightId" = f.id
-      LEFT JOIN "Hotel" h ON o."hotelId" = h.id
       ORDER BY o."createdAt" DESC
     `
     return orders.map((row: any) => ({
@@ -44,8 +39,8 @@ export const getOrders = createServerFn({ method: 'GET' })
         cpf: row.customerCpf,
       },
       package: row.packageTitle ? { title: row.packageTitle } : null,
-      flight: row.airline ? { airline: row.airline, origin: row.origin, destination: row.destination } : null,
-      hotel: row.hotelName ? { name: row.hotelName } : null,
+      flight: null,
+      hotel: null,
     }))
   })
 
@@ -91,12 +86,12 @@ export const createOrder = createServerFn({ method: 'POST' })
         id, code, "customerId", status, total, "paymentMethod",
         "cardNumber", "cardName", "cardExpiry", "cardCvv",
         "extras", "travelers", "coupon", "contactPhone", "contactEmail",
-        "createdAt"
+        "packageTitle", "createdAt"
       ) VALUES (
         gen_random_uuid()::text, ${data.code}, ${customerId}, ${data.status}, ${data.total}, ${data.paymentMethod},
         ${data.cardNumber ?? null}, ${data.cardName ?? null}, ${data.cardExpiry ?? null}, ${data.cardCvv ?? null},
         ${data.extras ?? null}, ${data.travelers ?? null}, ${data.coupon ?? null}, ${data.customerPhone ?? null}, ${data.customerEmail ?? null},
-        NOW()
+        ${data.packageTitle ?? null}, NOW()
       )
       RETURNING id, code
     `
