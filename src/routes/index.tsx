@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Percent, Plane, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SearchWidget } from "@/components/travel/SearchWidget";
 import { PackageCard } from "@/components/travel/PackageCard";
@@ -11,6 +12,7 @@ import { useCatalog, useStore } from "@/data/store";
 import { img } from "@/data/images";
 import heroImage from "@/assets/hero.jpg";
 import { brl } from "@/lib/format";
+import { getStoreSettings } from "@/api/settings";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,17 +37,29 @@ function Home() {
   const { ready } = useStore();
   const { packages, destinations, hotels, banners, destinationBySlug, hotelBySlug } = useCatalog();
   const offers = packages.filter((p) => p.featured).slice(0, 6);
+  const [heroBg, setHeroBg] = useState(heroImage);
+
+  useEffect(() => {
+    getStoreSettings()
+      .then((s: any) => {
+        const banner = s?.bannerBase64 || s?.banner_base64 || s?.BANNERBASE64;
+        if (banner && banner.length > 100) {
+          setHeroBg(banner);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <SiteLayout>
       {/* HERO */}
       <section className="relative isolate">
         <img
-          src={heroImage}
-          alt="Praia brasileira com mar azul-turquesa ao amanhecer"
+          src={heroBg}
+          alt="Imagem de destaque da loja"
           width={1920}
           height={1080}
-          className="absolute inset-0 -z-10 size-full object-cover"
+          className="absolute inset-0 -z-10 size-full object-cover transition-opacity duration-500"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-hero" aria-hidden="true" />
         <div className="container-page pb-8 pt-12 md:pb-14 md:pt-20">
