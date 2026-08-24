@@ -163,12 +163,12 @@ function Home() {
       {/* OFERTAS */}
       <section aria-labelledby="ofertas-home" className="container-page py-4 md:py-8">
         <h2 id="ofertas-home" className="sr-only">
-          Ofertas para você viajar mais
+          {texts.packagesTitle || "Pacotes Nacionais"}
         </h2>
         <SectionHeading
-          eyebrow="Ofertas da semana"
-          title="Ofertas para você viajar mais"
-          description="Pacotes completos com voo, hospedagem e traslado. Preços por pessoa em apartamento duplo."
+          eyebrow="Ofertas em destaque"
+          title={texts.packagesTitle || "Pacotes Nacionais"}
+          description={texts.packagesDesc || "Voos e hospedagem com valores imperdíveis para você curtir suas férias."}
           action={
             <Button asChild variant="outline">
               <Link to="/ofertas">
@@ -194,12 +194,12 @@ function Home() {
       {/* DESTINOS */}
       <section aria-labelledby="destinos-home" className="container-page py-14 md:py-20">
         <h2 id="destinos-home" className="sr-only">
-          Destinos em destaque
+          {texts.destinationsTitle || "Principais Destinos"}
         </h2>
         <SectionHeading
           eyebrow="Destinos em destaque"
-          title="Para onde os brasileiros estão viajando"
-          description="Praias, serra e cidades com estrutura completa para famílias, casais e viagens de negócios."
+          title={texts.destinationsTitle || "Principais Destinos"}
+          description={texts.destinationsDesc || "Onde você quer viver sua próxima história?"}
           action={
             <Button asChild variant="ghost">
               <Link to="/destinos">
@@ -263,8 +263,8 @@ function Home() {
       <section className="container-page py-14 md:py-20">
         <SectionHeading
           eyebrow="Hotéis e resorts"
-          title="Hospedagens auditadas pela nossa equipe"
-          description="Visitamos e reavaliamos cada parceiro a cada temporada para garantir o padrão prometido."
+          title={texts.hotelsTitle || "Hospedagens Incríveis"}
+          description={texts.hotelsDesc || "Resorts all inclusive, pousadas charmosas e hotéis renomados."}
           action={
             <Button asChild variant="outline">
               <Link to="/hoteis">Ver todos os hotéis</Link>
@@ -299,7 +299,7 @@ function Home() {
         </div>
       </section>
 
-      <TrustSection />
+      <TrustSection texts={texts} />
     </SiteLayout>
   );
 }

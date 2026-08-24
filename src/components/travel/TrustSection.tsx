@@ -1,5 +1,6 @@
 import { CreditCard, Headset, Hotel, LifeBuoy, ShieldCheck } from "lucide-react";
 import { SectionHeading } from "./Bits";
+import { getText } from "@/data/texts";
 
 const ITEMS = [
   {
@@ -29,16 +30,16 @@ const ITEMS = [
   },
 ];
 
-export function TrustSection() {
+export function TrustSection({ texts }: { texts?: Record<string, string> }) {
   return (
     <section aria-labelledby="confianca" className="container-page py-14 md:py-20">
       <SectionHeading
-        eyebrow="Viaje com tranquilidade"
-        title="Uma agência completa cuidando de cada detalhe"
-        description="Da pesquisa ao retorno, a Voar Brasil acompanha sua viagem com estrutura de grande operadora e atendimento humano."
+        eyebrow={getText(texts, "whyBadge")}
+        title={getText(texts, "whyTitle")}
+        description={getText(texts, "whyDesc")}
       />
       <h2 id="confianca" className="sr-only">
-        Viaje com tranquilidade
+        {getText(texts, "whyBadge")}
       </h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {ITEMS.map(({ icon: Icon, title, text }) => (
@@ -53,10 +54,10 @@ export function TrustSection() {
       </div>
       <dl className="mt-8 grid gap-4 rounded-2xl bg-gradient-brand p-6 text-primary-foreground sm:grid-cols-4">
         {[
-          ["320 mil", "viajantes atendidos"],
-          ["4.8/5", "satisfação dos clientes"],
-          ["1.200+", "hotéis parceiros"],
-          ["18 anos", "de mercado"],
+          [getText(texts, "whyStat1Value"), getText(texts, "whyStat1Label")],
+          [getText(texts, "whyStat2Value"), getText(texts, "whyStat2Label")],
+          [getText(texts, "whyStat3Value"), getText(texts, "whyStat3Label")],
+          [getText(texts, "whyStat4Value"), getText(texts, "whyStat4Label")],
         ].map(([value, label]) => (
           <div key={label}>
             <dt className="font-display text-2xl font-extrabold text-highlight">{value}</dt>

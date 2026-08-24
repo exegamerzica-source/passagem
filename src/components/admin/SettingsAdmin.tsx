@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getStoreSettings, updateStoreSettings } from "@/api/settings";
+import { defaultSiteTexts } from "@/data/texts";
 
 export function SettingsAdmin() {
   const [cnpj, setCnpj] = useState("");
@@ -48,9 +49,9 @@ export function SettingsAdmin() {
           cnpj, storeName, logoBase64, bannerBase64, siteTexts
         }
       });
-      toast.success("Configuraues salvas com sucesso!");
+      toast.success("Configurações salvas com sucesso!");
     } catch (e) {
-      toast.error("Erro ao salvar configuraues");
+      toast.error("Erro ao salvar configurações");
     }
     setLoading(false);
   };
@@ -61,7 +62,7 @@ export function SettingsAdmin() {
 
   return (
     <div className="space-y-6 surface-card p-6">
-      <h2 className="text-xl font-bold">Configuraues da Loja</h2>
+      <h2 className="text-xl font-bold">Configurações da Loja</h2>
       
       <div className="grid gap-4 md:grid-cols-2">
         <div>
@@ -88,37 +89,31 @@ export function SettingsAdmin() {
       </div>
 
       <div className="mt-8 border-t pt-8">
-        <h3 className="text-lg font-bold mb-4">Textos do Site</h3>
-        <div className="grid gap-4">
-          <div>
-            <Label>Título Principal (Home)</Label>
-            <Input 
-              value={siteTexts.heroTitle || ""} 
-              onChange={e => updateText("heroTitle", e.target.value)} 
-              placeholder="Viaje mais. Pague menos. Viva o melhor!" 
-            />
-          </div>
-          <div>
-            <Label>Subtítulo Principal (Home)</Label>
-            <Textarea 
-              value={siteTexts.heroSubtitle || ""} 
-              onChange={e => updateText("heroSubtitle", e.target.value)} 
-              placeholder="Aproveite nossa promoção relâmpago. Garanta já a sua viagem..." 
-            />
-          </div>
-          <div>
-            <Label>Selo / Tag de Promoção (Ex: Oferta Exclusiva)</Label>
-            <Input 
-              value={siteTexts.heroBadge || ""} 
-              onChange={e => updateText("heroBadge", e.target.value)} 
-              placeholder="🔥 Oferta Exclusiva" 
-            />
-          </div>
+        <h3 className="text-lg font-bold mb-4">Textos de Todo o Site</h3>
+        <p className="text-sm text-muted-foreground mb-4">Altere qualquer texto exibido no site abaixo. Se deixar em branco, o texto original será exibido.</p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Object.entries(defaultSiteTexts).map(([key, config]) => (
+            <div key={key}>
+              <Label className="block mb-2">{config.label}</Label>
+              {config.isTextarea ? (
+                <Textarea 
+                  className="min-h-[100px]"
+                  value={siteTexts[key] !== undefined ? siteTexts[key] : config.default} 
+                  onChange={e => updateText(key, e.target.value)} 
+                />
+              ) : (
+                <Input 
+                  value={siteTexts[key] !== undefined ? siteTexts[key] : config.default} 
+                  onChange={e => updateText(key, e.target.value)} 
+                />
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
       <Button onClick={handleSave} disabled={loading} variant="highlight">
-        {loading ? "Salvando..." : "Salvar Configuraues"}
+        {loading ? "Salvando..." : "Salvar Configurações"}
       </Button>
     </div>
   );
