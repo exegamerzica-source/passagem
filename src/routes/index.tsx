@@ -15,13 +15,13 @@ import { brl } from "@/lib/format";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Voar Brasil | Pacotes de viagem, hotéis e voos em até 12x" },
+      { title: "CVC BRASIL| Pacotes de viagem, hotéis e voos em até 12x" },
       {
         name: "description",
         content:
           "Pesquise pacotes, hotéis e voos para Porto Seguro, Maceió, Rio de Janeiro, Gramado e mais de 10 destinos. Ofertas com até 35% de desconto e parcelamento sem juros.",
       },
-      { property: "og:title", content: "Voar Brasil | Pacotes de viagem, hotéis e voos" },
+      { property: "og:title", content: "CVC BRASIL| Pacotes de viagem, hotéis e voos" },
       {
         property: "og:description",
         content: "Ofertas de pacotes nacionais com hotel, voo e traslado inclusos. Parcele em até 12x sem juros.",

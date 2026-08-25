@@ -24,7 +24,7 @@ export const defaultSiteTexts: Record<string, { label: string, default: string, 
 
   whyBadge: { label: "Seção Por Quê: Tag", default: "Viaje com tranquilidade" },
   whyTitle: { label: "Seção Por Quê: Título", default: "Uma agência completa cuidando de cada detalhe" },
-  whyDesc: { label: "Seção Por Quê: Descrição", default: "Da pesquisa ao retorno, a Voar Brasil acompanha sua viagem com estrutura de grande operadora e atendimento humano.", isTextarea: true },
+  whyDesc: { label: "Seção Por Quê: Descrição", default: "Da pesquisa ao retorno, a CVC BRASILacompanha sua viagem com estrutura de grande operadora e atendimento humano.", isTextarea: true },
 
   whyStat1Value: { label: "Seção Por Quê: Estatística 1 Valor", default: "320 mil" },
   whyStat1Label: { label: "Seção Por Quê: Estatística 1 Desc", default: "viajantes atendidos" },
@@ -60,7 +60,7 @@ export const defaultSiteTexts: Record<string, { label: string, default: string, 
 
   footerAboutTitle: { label: "Rodapé: Sobre (Título)", default: "Sobre o Voar Brasil" },
   footerAboutText: { label: "Rodapé: Sobre (Texto)", default: "Sua agência de viagens digital focada em destinos incríveis pelo Brasil e pelo mundo.", isTextarea: true },
-  footerCopy: { label: "Rodapé: Direitos Autorais", default: "© 2026 Voar Brasil Viagens e Turismo. Todos os direitos reservados." },
+  footerCopy: { label: "Rodapé: Direitos Autorais", default: "© 2026 CVC BRASILViagens e Turismo. Todos os direitos reservados." },
 };
 
 export function getText(texts: Record<string, string> | undefined, key: keyof typeof defaultSiteTexts) {

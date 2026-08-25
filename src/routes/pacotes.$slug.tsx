@@ -128,7 +128,7 @@ function PacoteDetalhe() {
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
               {pkg.nights} noites em {destination?.name} com hospedagem no {hotel?.name}, regime de{" "}
               {pkg.board.toLowerCase()}, passagem aérea ida e volta pela {pkg.flight.airline}
-              {pkg.transfer ? " e traslado aeroporto/hotel/aeroporto" : ""}. Assistência da Voar Brasil durante toda a
+              {pkg.transfer ? " e traslado aeroporto/hotel/aeroporto" : ""}. Assistência da CVC BRASILdurante toda a
               viagem.
             </p>
 

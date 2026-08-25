@@ -25,7 +25,7 @@ export const Route = createFileRoute("/entrar")({
       { title: "Entrar ou criar conta | Voar Brasil" },
       {
         name: "description",
-        content: "Acesse sua conta Voar Brasil para acompanhar reservas, vouchers e ofertas exclusivas de viagem.",
+        content: "Acesse sua conta CVC BRASILpara acompanhar reservas, vouchers e ofertas exclusivas de viagem.",
       },
       { property: "og:title", content: "Entrar ou criar conta | Voar Brasil" },
       { property: "og:description", content: "Gerencie suas reservas e vouchers na sua conta Voar Brasil." },

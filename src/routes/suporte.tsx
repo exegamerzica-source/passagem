@@ -18,7 +18,7 @@ export const Route = createFileRoute("/suporte")({
       {
         name: "description",
         content:
-          "Fale com a Voar Brasil por telefone, WhatsApp ou e-mail, tire dúvidas sobre reservas, vouchers, bagagem e cancelamentos.",
+          "Fale com a CVC BRASILpor telefone, WhatsApp ou e-mail, tire dúvidas sobre reservas, vouchers, bagagem e cancelamentos.",
       },
       { property: "og:title", content: "Central de ajuda e atendimento | Voar Brasil" },
       { property: "og:description", content: "Atendimento 24h para reservas, vouchers e alterações de viagem." },

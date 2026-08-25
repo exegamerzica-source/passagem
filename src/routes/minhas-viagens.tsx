@@ -19,7 +19,7 @@ export const Route = createFileRoute("/minhas-viagens")({
         content: "Acompanhe suas reservas, baixe vouchers, veja passageiros e status de pagamento das suas viagens.",
       },
       { property: "og:title", content: "Minhas viagens e vouchers | Voar Brasil" },
-      { property: "og:description", content: "Todas as suas reservas Voar Brasil em um só lugar." },
+      { property: "og:description", content: "Todas as suas reservas CVC BRASILem um só lugar." },
     ],
   }),
   component: MinhasViagens,

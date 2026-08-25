@@ -8,13 +8,13 @@ import { img } from "@/data/images";
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
-      { title: "Sobre a Voar Brasil — agência de viagens nacional" },
+      { title: "Sobre a CVC BRASIL— agência de viagens nacional" },
       {
         name: "description",
         content:
           "Conheça a Voar Brasil: mais de 20 anos organizando pacotes nacionais, com lojas físicas, consultores especializados e atendimento 24h.",
       },
-      { property: "og:title", content: "Sobre a Voar Brasil — agência de viagens nacional" },
+      { property: "og:title", content: "Sobre a CVC BRASIL— agência de viagens nacional" },
       {
         property: "og:description",
         content: "Nossa história, números e compromisso com quem viaja pelo Brasil.",
@@ -66,7 +66,7 @@ function Sobre() {
             <SectionHeading eyebrow="Nossa história" title="Uma agência nascida na rodoviária de Santos" />
             <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
               <p>
-                A Voar Brasil começou em 2006 com uma sala de 20m² e uma ideia simples: organizar viagens nacionais com
+                A CVC BRASILcomeçou em 2006 com uma sala de 20m² e uma ideia simples: organizar viagens nacionais com
                 preço justo, parcelamento honesto e alguém de verdade do outro lado do telefone.
               </p>
               <p>

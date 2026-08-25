@@ -86,14 +86,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Voar Brasil | Pacotes de viagem, hotéis e voos" },
+      { title: "CVC Brasil | Pacotes de viagem, hotéis e voos" },
       {
         name: "description",
         content:
           "Pacotes de viagem, hotéis e voos para os melhores destinos do Brasil com parcelamento em até 12x sem juros.",
       },
-      { name: "author", content: "Voar Brasil Viagens e Turismo" },
-      { property: "og:site_name", content: "Voar Brasil" },
+      { name: "author", content: "CVC Brasil Viagens e Turismo" },
+      { property: "og:site_name", content: "CVC Brasil" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#1b2b5e" },
